@@ -1,4 +1,5 @@
 # infra settings 
+infra/main.bicepparam
 infra/main.parameters.json
 
 # Byte-compiled / optimized / DLL files

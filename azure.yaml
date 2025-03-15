@@ -8,4 +8,6 @@ services:
     project: ./src
     language: py
     host: appservice
-    
+infra:
+  name: main
+  parameters: ./infra/main.parameters.json

@@ -9,6 +9,12 @@ param name string
 @description('Primary location for all resources')
 param location string
 
+@description('OpenAI API key')
+param openai_key string
+
+@description('OpenAI API endpoint')
+param openai_endpoint string
+
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
 var tags = { 'azd-env-name': name }
 
@@ -25,6 +31,8 @@ module resources 'resources.bicep' = {
     location: location
     resourceToken: resourceToken
     tags: tags
+    openai_key: openai_key
+    openai_endpoint: openai_endpoint
   }
 }
 

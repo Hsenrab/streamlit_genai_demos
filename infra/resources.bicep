@@ -6,7 +6,6 @@ param openai_key string
 param openai_endpoint string 
 
  
-
 resource web 'Microsoft.Web/sites@2022-03-01' = {
   name: 'web-${resourceToken}'
   location: location
