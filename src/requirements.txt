@@ -1,4 +1,5 @@
 pandas
 numpy
 streamlit
-vega_datasets
+python-dotenv
+openai

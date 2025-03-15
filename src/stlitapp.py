@@ -1,17 +1,20 @@
 # code from https://docs.streamlit.io/library/get-started/create-an-app
-
+import os
 import altair as alt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from vega_datasets import data
+from dotenv import load_dotenv
+
+import openai_connection
+load_dotenv()
 
 st.title('Change Test')
 
 title = os.getenv("TITLE", "Contoso Housing")
 logo_image = os.getenv("LOGO_URL", "images/ContosoHousing")
 
-load_dotenv()
+
 
 # Add a button to reset all session state
 if st.button("Reset All"):
@@ -19,7 +22,7 @@ if st.button("Reset All"):
         del st.session_state[key]
 
 
-st.title("RAG " + title)
+st.title("Demos" + title)
 
 # Add a toggle to select the type of flow
 flow_type = st.radio(
@@ -56,16 +59,12 @@ elif flow_type == "Chat":
     # Initialize chat history
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = []
+        st.session_state.chat_messages.append({"role": "system", "content": "You are a helpful assistant."})
         
     # Display chat messages from history on app rerun
-    for interaction in st.session_state.chat_messages:
-        st.write(interaction)
-        if interaction["inputs"]["question"]:
-            with st.chat_message("user"):
-                st.write(interaction["inputs"]["question"])
-        if interaction["outputs"]["answer"]:
-            with st.chat_message("assistant"):
-                st.write(interaction["outputs"]["answer"])
+    for message in st.session_state.chat_messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
                 
                 
     # React to user input
@@ -74,20 +73,16 @@ elif flow_type == "Chat":
         with st.chat_message("user"):
             st.markdown(prompt)
         
-        response = "Temp Placeholder"
-        
-        st.write(response)
+        response = openai_connection.chat(prompt, st.session_state.chat_messages)
 
-    
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
-            st.markdown(response['answer'])
+            st.markdown(response)
             
         # Add assistant response to chat history
-        st.session_state.chat_messages.append(
-        {"inputs": {"question": prompt},
-         "outputs": {"answer": response['answer']}}
-    )
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        st.session_state.chat_messages.append({"role": "assistant", "content": response})
+    
 
 
 else:

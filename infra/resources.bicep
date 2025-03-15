@@ -2,6 +2,9 @@ param location string
 param resourceToken string
 param tags object
 
+param openai_key string
+param openai_endpoint string 
+
  
 
 resource web 'Microsoft.Web/sites@2022-03-01' = {
@@ -27,6 +30,8 @@ resource web 'Microsoft.Web/sites@2022-03-01' = {
     properties: {
       SCM_DO_BUILD_DURING_DEPLOYMENT: 'true'
       ENABLE_ORYX_BUILD: 'true'
+      OPENAI_API_KEY: openai_key
+      OPENAI_API_ENDPOINT: openai_endpoint
     }
   }
 

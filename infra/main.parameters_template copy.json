@@ -3,10 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "name": {
-      "value": "${AZURE_ENV_NAME}"
+      "value": "dev"
     },
     "location": {
-      "value": "${AZURE_LOCATION}"
+      "value": "eastus"
+    },
+    "openai_key": {
+      "value": "<your-openai-api-key>"
+    },
+    "openai_endpoint": {
+      "value": "<your-openai-api-endpoint>"
     }
   }
 }
