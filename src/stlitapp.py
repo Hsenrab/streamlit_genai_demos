@@ -29,7 +29,7 @@ st.title("Demos" + title)
 # Add a toggle to select the type of flow
 flow_type = st.radio(
     "Select the type of flow:",
-    ("Echo", "Chat", "Document Processing"),
+    ("Echo", "Chat", "Text Extraction", "Document Summarization", "Document Comparison"),
     horizontal=True
 )
 
@@ -86,39 +86,15 @@ elif flow_type == "Chat":
         st.session_state.chat_messages.append({"role": "user", "content": prompt})
         st.session_state.chat_messages.append({"role": "assistant", "content": response})
     
-
-
-else:
-    st.subheader("Document Summarisation")
+elif flow_type == "Text Extraction":
+    st.subheader("Text Extraction")
     # Add a toggle to select the type of flow
     upload_type = st.radio(
         "Select the type of upload:",
-        ("Text", "PDF", "Image"),
+        ("PDF", "Image"),
         horizontal=True)
-        
-    if upload_type == "Text":
-        # Input box for pasting text
-        document_text = st.text_area("Paste your document text here:")
-    
-        # Button to submit the text
-        if st.button("Submit"):
-            if document_text:
-                st.write("Document submitted")
-                # Process the document text here
-                
-                data = {
-                    "email": document_text
-                }
-                
-                result = {"status": "success", "message": "Placeholder"}
-                
-                # Display the result from the promptflow processing
-                st.json(result)
-                
-            else:
-                st.write("Please paste some text before submitting.")
 
-    elif upload_type == "PDF":
+    if upload_type == "PDF":
         # File uploader for PDF files
         
         extract_type = st.radio(
@@ -151,7 +127,7 @@ else:
                         markdown += result
                 st.write(markdown)
                 # Save the markdown output to a file
-                output_folder = "mardown_output"
+                output_folder = "markdown_output"
                 if not os.path.exists(output_folder):
                     os.makedirs(output_folder)
 
@@ -197,7 +173,41 @@ else:
 
                 st.write(f"Markdown output saved to {output_filepath}")
             
-                
-                
+elif flow_type == "Document Summarization":
+    st.subheader("Document Summarization")
+    
+    # File selector for markdown files
+    markdown_files = [f for f in os.listdir("markdown_output") if f.endswith(".md")]
+
+    selected_file = st.selectbox("Choose a markdown file to summarize:", markdown_files)
+
+    if selected_file:
+        with open(os.path.join("markdown_output", selected_file), "r", encoding="utf-8") as f:
+            markdown_content = f.read()
+        
+        st.text_area("Document Content", markdown_content, height=400, disabled=True)
+        
+        if st.button("Summarize"):
+            summary = openai_connection.summarize(markdown_content)
+            st.write(summary)
+    
+else: # Document Comparison
+    # File selector for markdown files
+    markdown_files = [f for f in os.listdir("markdown_output") if f.endswith(".md")]
+
+    selected_files = st.multiselect("Choose two markdown files to compare:", markdown_files, max_selections=2)
+
+    if len(selected_files) == 2:
+        with open(os.path.join("markdown_output", selected_files[0]), "r", encoding="utf-8") as f:
+            markdown_content_1 = f.read()
+        with open(os.path.join("markdown_output", selected_files[1]), "r", encoding="utf-8") as f:
+            markdown_content_2 = f.read()
+        
+        st.text_area("Document Content 1", markdown_content_1, height=200)
+        st.text_area("Document Content 2", markdown_content_2, height=200)
+        
+        if st.button("Compare"):
+            comparison = openai_connection.compare(markdown_content_1, markdown_content_2)
+            st.write(comparison)  
 
     

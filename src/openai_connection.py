@@ -27,7 +27,7 @@ def question(prompt, system_prompt="You are a helpful assistant."):
         ]
     )
 
-    print(response.choices[0].message.content)
+    return response.choices[0].message.content
     
     
 def chat(prompt, history):
@@ -135,5 +135,19 @@ def create_data_url(image_path):
     dataurl = f'data:image/{ext};base64,{base64_utf8_str}'
     
     return dataurl
+
+
+def summarize(markdown):
+    system_prompt = "You are an AI assistant that summarizes markdown text"
+    prompt = f"Text to summarize:\n{markdown}"
+
+    return question(prompt, system_prompt)
+
+
+def compare(markdown1, markdown2):
+    system_prompt = "You are an AI assistant that copmares two markdown documents"
+    prompt = f"Text to Compare:\n\n--- Start of Document 1 ---\n{markdown1}\n--- End of Document 1 ---\n\n--- Start of Document 2 ---\n{markdown2}\n--- End of Document 2 ---\n\n--- End of Comparison ---"
+
+    return question(prompt, system_prompt)
 
 # TODO create button to delete all uploaded pdfs and images.
