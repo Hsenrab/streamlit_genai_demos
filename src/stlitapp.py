@@ -127,15 +127,41 @@ else:
         horizontal=True)
         
         document_file = st.file_uploader("Upload a PDF file:")
-        
+        if document_file:
+            # Create uploads folder if it does not already exist
+            if not os.path.exists("uploads"):
+                os.makedirs("uploads")
+            
+            filepath = os.path.join("uploads", document_file.name)
+            with open(filepath, "wb") as f:
+                f.write(document_file.getbuffer())
         
         # Button to submit the file
         if st.button("Submit"):
             if extract_type == "Doc Intelligence":
                 st.write("Not yet implemented")
             else:
-                st.write("Not yet implemented")
-                
+                with st.spinner("Converting to Images"):
+                    image_paths = openai_connection.pdftoimages(filepath)
+                with st.spinner("Extracting text from images"):
+                    markdown = ""
+                    for image_path in image_paths:
+                        dataurl = openai_connection.create_data_url(image_path)
+                        result = openai_connection.generate_markdown(dataurl)
+                        markdown += result
+                st.write(markdown)
+                # Save the markdown output to a file
+                output_folder = "mardown_output"
+                if not os.path.exists(output_folder):
+                    os.makedirs(output_folder)
+
+                output_filename = os.path.splitext(document_file.name)[0] + "_output.md"
+                output_filepath = os.path.join(output_folder, output_filename)
+
+                with open(output_filepath, "w", encoding="utf-8") as f:
+                    f.write(markdown)
+
+                st.write(f"Markdown output saved to {output_filepath}")
     else: # Image
         # File uploader for images
         document_image = st.file_uploader("Upload an image file:")
@@ -154,21 +180,23 @@ else:
                 with open(filepath, "wb") as f:
                     f.write(document_image.getbuffer())
                     
-                
-                
-                # Process the image here - create a data URL
-
-                binary_fc       = open(filepath, 'rb').read()
-                base64_utf8_str = base64.b64encode(binary_fc).decode('utf-8')
-
-                ext= document_image.name.split('.')[-1]
-                dataurl = f'data:image/{ext};base64,{base64_utf8_str}'
-
+                dataurl = openai_connection.create_data_url(filepath)
                 
                 result = openai_connection.generate_markdown(dataurl)
                 st.write(result)
-            else:
-                st.write("Please upload an image before submitting.")
+                # Save the markdown output to a file
+                output_folder = "markdown_output"
+                if not os.path.exists(output_folder):
+                    os.makedirs(output_folder)
+
+                output_filename = os.path.splitext(document_image.name)[0] + "_output.md"
+                output_filepath = os.path.join(output_folder, output_filename)
+
+                with open(output_filepath, "w", encoding="utf-8") as f:
+                    f.write(result)
+
+                st.write(f"Markdown output saved to {output_filepath}")
+            
                 
                 
 

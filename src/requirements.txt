@@ -3,3 +3,5 @@ numpy
 streamlit
 python-dotenv
 openai
+pymupdf
+base64

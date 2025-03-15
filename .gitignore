@@ -2,6 +2,11 @@
 infra/main.bicepparam
 infra/main.parameters.json
 
+# generated files
+output_images/*
+markdown_output/*
+uploads/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
