@@ -3,6 +3,11 @@ import os
 import streamlit as st
 import urllib.request
 
+import base64
+import time
+import io
+from PIL import Image
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,3 +56,49 @@ def chat(prompt, history):
 
     return result
 
+
+def generate_markdown(image_url):
+    """
+    Gpt-4o model
+    """
+    
+    system_prompt = """
+    You are an AI assistance that extracts text from the image. You are especially good at extracting tables.
+    Start your response with the page number of the image. 
+    Example Page:
+    
+    Page 123
+    
+    Monthly Savings
+    | Month    | Savings |Details      |
+    | -------- | ------- |------------ |
+    | January  | $250    | for holiday |
+    | February | $80     | pension     |
+    | March    | $420    | new cat     |
+    
+    Savings were significantly lower in February. This is surprising because it is a short month and contributing to pension shuld be a priority.
+    """
+    
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt,
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Extract text from the image"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": image_url},
+                    },
+                ],
+            },
+        ],
+        max_tokens=2000,
+        temperature=0.0,
+    )
+    
+    return response.choices[0].message.content
