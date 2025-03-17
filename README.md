@@ -1,22 +1,34 @@
-# Simple Streamlit AZD Template
+# GenAI Demos with streamlit
 
-The most basic streamlit "hello world" application as an AZD template ready for Azure App Service
+As someone familar with python a way to create quick demos with a functional UI
 
 ![system diagram](diagram.png)
 
+## Pre-req
+- Azure subscription with contributor rights
+- Previously deployed OpenAI / Foundry resource with gpt4o deployed.
+
 ## Usage
 
-1. Install AZD and run the following command to initialize the project.
-
+### Locally
+1. Create a virtual environment
+2. Install dependencies in requirements.txt
+3. Run the command below to run strealit on localhost.
 ```bash
-azd init --template MiguelElGallo/simple-streamlit-azd
+python -m streamlit run src/stlitapp.py
 ```
 
-This command will clone the code to your current folder and prompt you for the following information:
+### Deploy to cloud
+
+1. Install AZD and clone the repo.
+
+2. Create a main.bicepparam file from template
+
+3. Add openai api key and endpoint from existing resource into param file.
 
 - `Environment Name`: This will be used as a prefix for the resource group that will be created to hold all Azure resources. This name should be unique within your Azure subscription.
 
-2. Run the following command to build a deployable copy of your application, provision the template's infrastructure to Azure and also deploy the application code to those newly provisioned resources.
+4. Run the following command to build a deployable copy of your application, provision the template's infrastructure to Azure and also deploy the application code to those newly provisioned resources.
 
 ```bash
 azd up
@@ -28,7 +40,7 @@ This command will prompt you for the following information:
 
 > NOTE: This may take a while to complete as it executes three commands: `azd package` (builds a deployable copy of your application), `azd provision` (provisions Azure resources), and `azd deploy` (deploys application code). You will see a progress indicator as it packages, provisions and deploys your application.
 
-3. Then make changes to stlitapp.py and run `azd deploy` again to update your changes.
+3. If you want to change things make changes to stlitapp.py and run `azd deploy` again to update your changes.
 
 ## Notes
 
@@ -36,6 +48,6 @@ This uses the F1 (free) SKU for app service, which has limited CPU and RAM resou
 
 See the [pricing calculator](https://azure.microsoft.com/en-au/pricing/calculator/) for details on paid SKUs replace the SKU option with a suitable choice.
 
-Based on the this [great template:](https://github.com/tonybaloney/simple-flask-azd)
+Based on the this [great template:](MiguelElGallo/simple-streamlit-azd)
 
 Added support for `azd pipeline config`, enabling creation of CI/CD pipeline for GitHub Actions. Note this is still a [beta](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=GitHub) feature in AZD. 
