@@ -3,6 +3,12 @@ import openai_connection
 import os
 
 st.title("Document Summarization")
+if "summarize_prompt" not in st.session_state:
+    st.session_state.summarize_prompt = "You are an AI assistant that summarizes markdown text"
+    
+view_prompt = st.checkbox("View Prompt", value=False)
+if view_prompt:
+    st.session_state.summarize_prompt = st.text_area("Current Prompt", st.session_state.summarize_prompt)
 
 output_folder = "markdown_output"
 if not os.path.exists(output_folder):

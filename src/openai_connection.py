@@ -104,15 +104,18 @@ def generate_markdown(image_url):
 
 
 def summarize(markdown):
-    system_prompt = "You are an AI assistant that summarizes markdown text"
-    prompt = f"Text to summarize:\n{markdown}"
+    st.write(st.session_state.get("summarize_prompt"))
+    system_prompt = st.session_state.get("summarize_prompt", "You are an AI assistant that summarizes markdown text")
+    prompt = f"Input:\n{markdown}"
+    
+    st.write(system_prompt)
 
     return question(prompt, system_prompt)
 
 
 def compare(markdown1, markdown2):
-    system_prompt = "You are an AI assistant that copmares two markdown documents"
-    prompt = f"Text to Compare:\n\n--- Start of Document 1 ---\n{markdown1}\n--- End of Document 1 ---\n\n--- Start of Document 2 ---\n{markdown2}\n--- End of Document 2 ---\n\n--- End of Comparison ---"
+    system_prompt = st.session_state.get("comparison_prompt", "You are an AI assistant that compares two markdown documents")
+    prompt = f"Input:\n\n--- Start of Document 1 ---\n{markdown1}\n--- End of Document 1 ---\n\n--- Start of Document 2 ---\n{markdown2}\n--- End of Document 2 ---"
 
     return question(prompt, system_prompt)
 

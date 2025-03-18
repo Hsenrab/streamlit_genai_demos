@@ -97,7 +97,7 @@ else:
             output_folder = "markdown_output"
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
-            output_filename = "document_name_output.md"
+            output_filename = document_name+"_output.md"
             output_filepath = os.path.join(output_folder, output_filename)
             with open(output_filepath, "w", encoding="utf-8") as f:
                 f.write(document_text)
