@@ -15,7 +15,7 @@ As someone familar with python a way to create quick demos with a functional UI
 2. Install dependencies in requirements.txt
 3. Run the command below to run strealit on localhost.
 ```bash
-python -m streamlit run src/stlitapp.py
+python -m streamlit run src/Home.py
 ```
 
 ### Deploy to cloud

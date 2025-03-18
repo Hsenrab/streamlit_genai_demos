@@ -11,7 +11,6 @@ import openai_connection
 import utils
 
 
-st.set_page_config(page_title="GenAI Demo App", page_icon=":house:", layout="wide")
 load_dotenv()
 
 st.title('GenAI Demo App')
