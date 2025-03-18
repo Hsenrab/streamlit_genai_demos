@@ -4,19 +4,19 @@ import utils
 import openai_connection
 
 
-st.title("Text Extraction")
+st.title("Upload FIles")
 
 # Add a toggle to select the type of flow
 upload_type = st.radio(
     "Select the type of upload:",
-    ("PDF", "Image"),
+    ("PDF", "Image", "Text"),
     horizontal=True)
 if upload_type == "PDF":
     # File uploader for PDF files
     
     extract_type = st.radio(
     "Select way to extract text from pdf:",
-    ("Doc Intelligence", "GPT 4o"),
+    ("GPT 4o", "Doc Intelligence"),
     horizontal=True)
     
     document_file = st.file_uploader("Upload a PDF file:")
@@ -53,7 +53,7 @@ if upload_type == "PDF":
                 f.write(markdown)
             st.write(f"Markdown output saved to {output_filepath}")
             
-else: # Image
+elif upload_type == "Image": 
      # File uploader for images
      document_image = st.file_uploader("Upload an image file:")
      
@@ -83,4 +83,22 @@ else: # Image
              output_filepath = os.path.join(output_folder, output_filename)
              with open(output_filepath, "w", encoding="utf-8") as f:
                  f.write(result)
-             st.write(f"Markdown output saved to {output_filepath}")  
+             st.write(f"Markdown output saved to {output_filepath}") 
+             
+else:
+    # Text uploader
+    document_name = st.text_input("Enter a name for the text:")
+    document_text = st.text_area("Enter text:")
+    
+    # Button to submit the text
+    if st.button("Submit"):
+        if document_text and document_name:
+            # Save the markdown output to a file
+            output_folder = "markdown_output"
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder)
+            output_filename = "document_name_output.md"
+            output_filepath = os.path.join(output_folder, output_filename)
+            with open(output_filepath, "w", encoding="utf-8") as f:
+                f.write(document_text)
+            st.write(f"Markdown output saved to {output_filepath}")
