@@ -4,7 +4,8 @@ param tags object
 
 param openai_key string
 param openai_endpoint string 
-
+param doc_intel_key string
+param doc_intel_endpoint string
  
 resource web 'Microsoft.Web/sites@2022-03-01' = {
   name: 'web-${resourceToken}'
@@ -31,6 +32,8 @@ resource web 'Microsoft.Web/sites@2022-03-01' = {
       ENABLE_ORYX_BUILD: 'true'
       OPENAI_API_KEY: openai_key
       OPENAI_API_ENDPOINT: openai_endpoint
+      DOC_INTEL_API_KEY: doc_intel_key
+      DOC_INTEL_ENDPOINT: doc_intel_endpoint
     }
   }
 

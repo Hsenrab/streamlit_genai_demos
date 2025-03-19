@@ -32,7 +32,16 @@ if upload_type == "PDF":
     # Button to submit the file
     if st.button("Submit"):
         if extract_type == "Doc Intelligence":
-            st.write("Not yet implemented")
+            text = utils.extract_doc_intelligence(filepath)
+            output_folder = "output"
+            if not os.path.exists(output_folder):
+                os.makedirs(output_folder)
+            output_filename = os.path.splitext(document_file.name)[0] + "_output.txt"
+            output_filepath = os.path.join(output_folder, output_filename)
+            with open(output_filepath, "w", encoding="utf-8") as f:
+                f.write(text)
+            st.write(f"Output saved to {output_filepath}")
+            
         else:
             with st.spinner("Converting to Images"):
                 image_paths = utils.pdftoimages(filepath)
@@ -44,7 +53,7 @@ if upload_type == "PDF":
                     markdown += result
             st.write(markdown)
             # Save the markdown output to a file
-            output_folder = "markdown_output"
+            output_folder = "output"
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
             output_filename = os.path.splitext(document_file.name)[0] + "_output.md"

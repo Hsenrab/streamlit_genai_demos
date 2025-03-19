@@ -15,6 +15,12 @@ param openai_key string
 @description('OpenAI API endpoint')
 param openai_endpoint string
 
+@description('Doc Intel API key')
+param doc_intel_key string
+
+@description('Doc Intel API endpoint')
+param doc_intel_endpoint string
+
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
 var tags = { 'azd-env-name': name }
 

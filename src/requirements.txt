@@ -4,3 +4,4 @@ streamlit
 python-dotenv
 openai
 pymupdf
+azure-ai-documentintelligence

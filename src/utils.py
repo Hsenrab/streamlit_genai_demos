@@ -4,6 +4,13 @@ import os
 import base64
 import streamlit as st
 
+from dotenv import load_dotenv
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeResult, AnalyzeDocumentRequest
+load_dotenv()
+
+
+
 def pdftoimages(pdf_path):
     
     pdf_document = fitz.open(pdf_path)
@@ -84,3 +91,12 @@ def prompt_management(prompt_type, default_prompt):
                 st.success(f"New prompt saved as {new_prompt_name}")
             else:
                 st.warning("Please provide a name for the new prompt.")
+                
+                
+def extract_doc_intelligence(filepath):
+    
+    # For how to obtain the endpoint and key, please see PREREQUISITES above.
+    endpoint = os.environ["DOC_INTEL_ENDPOINT"]
+    key = os.environ["DOC_INTEL_API_KEY"]
+
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))

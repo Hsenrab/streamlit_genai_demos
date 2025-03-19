@@ -6,21 +6,21 @@ import utils
 st.title("Document Summarization")
 
 with st.expander("Prompt Management", expanded=True):
-    utils.prompt_management("summarize", "You are an AI assistant that summarizes markdown documents")
+    utils.prompt_management("summarize", "You are an AI assistant that summarizes documents")
 
-output_folder = "markdown_output"
+output_folder = "output"
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
     
-# File selector for markdown files
-markdown_files = [f for f in os.listdir("markdown_output") if f.endswith(".md")]
-selected_file = st.selectbox("Choose a markdown file to summarize:", markdown_files)
+# File selector for files
+files = [f for f in os.listdir(output_folder)]
+selected_file = st.selectbox("Choose a file to summarize:", files)
 if selected_file:
-    with open(os.path.join("markdown_output", selected_file), "r", encoding="utf-8") as f:
-        markdown_content = f.read()
+    with open(os.path.join(output_folder, selected_file), "r", encoding="utf-8") as f:
+        content = f.read()
     
-    st.text_area("Document Content", markdown_content, height=400, disabled=True)
+    st.text_area("Document Content", content, height=400, disabled=True)
     
     if st.button("Summarize"):
-        summary = openai_connection.summarize(markdown_content)
+        summary = openai_connection.summarize(content)
         st.write(summary)
