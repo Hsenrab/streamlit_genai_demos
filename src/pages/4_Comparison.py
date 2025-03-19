@@ -1,15 +1,15 @@
 import streamlit as st
 import openai_connection
 import os
+import utils
 
 
 st.title("Document Comparison")
-if "comparison_prompt" not in st.session_state:
-    st.session_state.comparison_prompt = "You are an AI assistant that compares two markdown documents"
 
-view_prompt = st.checkbox("View Prompt", value=False)
-if view_prompt:
-    st.session_state.comparison_prompt = st.text_area("Current Prompt", st.session_state.comparison_prompt)
+    
+with st.expander("Prompt Management", expanded=True):
+    utils.prompt_management("comparison", "You are an AI assistant that compares two markdown documents")
+
 
 output_folder = "markdown_output"
 if not os.path.exists(output_folder):

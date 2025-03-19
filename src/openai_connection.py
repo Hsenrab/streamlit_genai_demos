@@ -3,10 +3,6 @@ import os
 import streamlit as st
 import urllib.request
 
-import fitz
-import base64
-
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -104,11 +100,8 @@ def generate_markdown(image_url):
 
 
 def summarize(markdown):
-    st.write(st.session_state.get("summarize_prompt"))
     system_prompt = st.session_state.get("summarize_prompt", "You are an AI assistant that summarizes markdown text")
     prompt = f"Input:\n{markdown}"
-    
-    st.write(system_prompt)
 
     return question(prompt, system_prompt)
 
