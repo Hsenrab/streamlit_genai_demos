@@ -11,7 +11,7 @@ import openai_connection
 import utils
 
 
-load_dotenv(override=True)
+load_dotenv()
 
 st.title('GenAI Demo App')
 
