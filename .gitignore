@@ -6,6 +6,7 @@ infra/main.parameters.json
 output_images/*
 markdown_output/*
 uploads/*
+prompt/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
