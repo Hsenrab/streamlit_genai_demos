@@ -41,7 +41,7 @@ MODEL_O3_MINI_API_KEY=your-api-key-here
 MODEL_O3_MINI_DEPLOYMENT_NAME=o3-mini
 MODEL_O3_MINI_API_VERSION=2024-12-01-preview
 MODEL_O3_MINI_TOKEN_PARAM=max_completion_tokens
-MODEL_O3_MINI_UNSUPPORTED_PARAMS=temperature
+MODEL_O3_MINI_UNSUPPORTED_PARAMS=temperature # https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/reasoning?tabs=python-secure#not-supported
 ```
 
 For each model, you need to define:
