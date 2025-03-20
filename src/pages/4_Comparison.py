@@ -6,6 +6,9 @@ import utils
 
 st.title("Document Comparison")
 
+# Add model selection UI
+with st.expander("Model Settings", expanded=False):
+    model_name, temperature, max_tokens = openai_connection.create_model_ui("comparison")
     
 with st.expander("Prompt Management", expanded=True):
     utils.prompt_management("comparison", "You are an AI assistant that compares two markdown documents")
@@ -17,7 +20,7 @@ if not os.path.exists(output_folder):
 
 markdown_files = [f for f in os.listdir("markdown_output") if f.endswith(".md")]
 selected_files = st.multiselect("Choose two markdown files to compare:", markdown_files, max_selections=2)
-if len(selected_files) == 2:
+if len(selected_files) == 2:  # Fixed parentheses placement here
     with open(os.path.join("markdown_output", selected_files[0]), "r", encoding="utf-8") as f:
         markdown_content_1 = f.read()
     with open(os.path.join("markdown_output", selected_files[1]), "r", encoding="utf-8") as f:
@@ -27,6 +30,5 @@ if len(selected_files) == 2:
     st.text_area("Document Content 2", markdown_content_2, height=200)
     
     if st.button("Compare"):
-        comparison = openai_connection.compare(markdown_content_1, markdown_content_2)
-        st.write(comparison)  
-    
+        comparison = openai_connection.compare(markdown_content_1, markdown_content_2, model_name, temperature, max_tokens)
+        st.write(comparison)
