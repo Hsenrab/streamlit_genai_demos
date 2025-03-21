@@ -38,21 +38,24 @@ def setup_client(model_name=None):
     If model_name is provided, use model-specific credentials.
     """
     try:
-        # Use model-specific credentials if provided
-        if model_name:
-            # Create prefix for model-specific env vars
-            prefix = f"MODEL_{model_name.upper().replace('-', '_')}"
-            api_key = os.getenv(f"{prefix}_API_KEY")
-            endpoint = os.getenv(f"{prefix}_ENDPOINT")
-            api_version = os.getenv(f"{prefix}_API_VERSION", "2024-02-01")
-        else:
-            # Fallback to default credentials
+        # If model_name is None, get the default model name from environment
+        if model_name is None:
+            model_name = os.getenv("DEFAULT_MODEL_NAME", "gpt-4o-mini")
+        
+        # Create prefix for model-specific env vars
+        prefix = f"MODEL_{model_name.upper().replace('-', '_')}"
+        api_key = os.getenv(f"{prefix}_API_KEY")
+        endpoint = os.getenv(f"{prefix}_ENDPOINT")
+        api_version = os.getenv(f"{prefix}_API_VERSION", "2024-02-01")
+        
+        # If model-specific credentials aren't available, fall back to default credentials
+        if not api_key or not endpoint:
             api_key = os.getenv("OPENAI_API_KEY")
             endpoint = os.getenv("OPENAI_API_ENDPOINT")
             api_version = "2024-02-01"
 
         if not api_key or not endpoint:
-            st.error(f"Missing API key or endpoint for model: {model_name or 'default'}")
+            st.error(f"Missing API key or endpoint for model: {model_name}")
             return None
 
         client = openai.AzureOpenAI(
@@ -64,6 +67,7 @@ def setup_client(model_name=None):
     except (ValueError, KeyError, RuntimeError) as e:
         st.error(f"Error setting up Azure OpenAI client: {str(e)}")
         return None
+
 
 def get_model_params(model_name):
     """Get model-specific parameters"""
