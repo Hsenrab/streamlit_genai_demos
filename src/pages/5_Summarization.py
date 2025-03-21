@@ -5,6 +5,10 @@ import utils
 
 st.title("Document Summarization")
 
+# Add model selection UI
+with st.expander("Model Settings", expanded=False):
+    model_name, temperature, max_tokens = openai_connection.create_model_ui("summarize")
+
 with st.expander("Prompt Management", expanded=True):
     utils.prompt_management("summarize", "You are an AI assistant that summarizes markdown documents")
 
@@ -22,5 +26,5 @@ if selected_file:
     st.text_area("Document Content", markdown_content, height=400, disabled=True)
     
     if st.button("Summarize"):
-        summary = openai_connection.summarize(markdown_content)
+        summary = openai_connection.summarize(markdown_content, model_name, temperature, max_tokens)
         st.write(summary)

@@ -6,6 +6,10 @@ import openai_connection
 
 st.title("Upload FIles")
 
+# Add model selection UI
+with st.expander("Model Settings", expanded=False):
+    model_name, temperature, max_tokens = openai_connection.create_model_ui("upload")
+
 # Add a toggle to select the type of flow
 upload_type = st.radio(
     "Select the type of upload:",
@@ -40,7 +44,7 @@ if upload_type == "PDF":
                 markdown = ""
                 for image_path in image_paths:
                     dataurl = utils.create_data_url(image_path)
-                    result = openai_connection.generate_markdown(dataurl)
+                    result = openai_connection.generate_markdown(dataurl, model_name, temperature, max_tokens)
                     markdown += result
             st.write(markdown)
             # Save the markdown output to a file
@@ -73,7 +77,7 @@ elif upload_type == "Image":
                  
              dataurl = utils.create_data_url(filepath)
              
-             result = openai_connection.generate_markdown(dataurl)
+             result = openai_connection.generate_markdown(dataurl, model_name, temperature, max_tokens)
              st.write(result)
              # Save the markdown output to a file
              output_folder = "markdown_output"
