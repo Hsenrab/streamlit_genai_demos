@@ -74,6 +74,13 @@ jobs:
 
             echo "OPENAI_KEY=$openaiKey" >> $env:GITHUB_ENV
             echo "OPENAI_ENDPOINT=$openaiEndpoint" >> $env:GITHUB_ENV
+
+            if (-not $env:OPENAI_KEY -or -not $env:OPENAI_ENDPOINT) {
+              Write-Error "Environment variables OPENAI_KEY or OPENAI_ENDPOINT are not set."
+              exit 1
+            } else {
+              Write-Host "Environment variables have been set successfully."
+            }
         shell: pwsh
 
       - name: Provision Infrastructure
