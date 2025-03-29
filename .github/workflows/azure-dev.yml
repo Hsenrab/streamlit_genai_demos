@@ -61,28 +61,6 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set environment variables from JSON
-        run: |
-          $config = ConvertFrom-Json -InputObject '${{ secrets.AZURE_KEYS }}'
-          
-            # Set specific properties as environment variables
-            $openaiKey = $config.openai_key
-            $openaiEndpoint = $config.openai_endpoint
-
-            # Print the openaiEndpoint
-            Write-Host "OpenAI KeyEndpoint: $openaiEndpoint"
-
-            echo "OPENAI_KEY=$openaiKey" >> $GITHUB_ENV
-            echo "OPENAI_ENDPOINT=$openaiEndpoint" >> $GITHUB_ENV
-
-            if (-not $env:OPENAI_KEY -or -not $env:OPENAI_ENDPOINT) {
-              Write-Error "Environment variables OPENAI_KEY or OPENAI_ENDPOINT are not set."
-              exit 1
-            } else {
-              Write-Host "Environment variables have been set successfully."
-            }
-        shell: pwsh
-
       - name: Provision Infrastructure
         run: |
           azd provision --no-prompt
@@ -90,6 +68,8 @@ jobs:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+          AZURE_OPENAI_API_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
