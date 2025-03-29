@@ -25,6 +25,7 @@ jobs:
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,8 +61,23 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Set environment variables from JSON
+        run: |
+          $jsonContent = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${{ secrets.AZURE_KEYS }}'))
+          $config = $jsonContent | ConvertFrom-Json
+            
+          # Set each property as an environment variable
+          foreach ($property in $config.PSObject.Properties) {
+            $name = $property.Name.ToUpper()
+            $value = $property.Value
+            echo "$name=$value" >> $env:GITHUB_ENV
+          }
+        shell: pwsh
+
       - name: Provision Infrastructure
-        run: azd provision --no-prompt
+        run: |
+          azd provision --no-prompt
+
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
