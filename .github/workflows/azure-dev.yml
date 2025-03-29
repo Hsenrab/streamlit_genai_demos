@@ -63,9 +63,8 @@ jobs:
 
       - name: Set environment variables from JSON
         run: |
-          $jsonContent = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${{ secrets.AZURE_KEYS }}'))
-          $config = $jsonContent | ConvertFrom-Json
-            
+          $config = '${{ secrets.AZURE_KEYS }}' | ConvertFrom-Json
+          
           # Set each property as an environment variable
           foreach ($property in $config.PSObject.Properties) {
             $name = $property.Name.ToUpper()
@@ -77,7 +76,6 @@ jobs:
       - name: Provision Infrastructure
         run: |
           azd provision --no-prompt
-
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
