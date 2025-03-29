@@ -65,12 +65,12 @@ jobs:
         run: |
           $config = '${{ secrets.AZURE_KEYS }}' | ConvertFrom-Json
           
-          # Set each property as an environment variable
-          foreach ($property in $config.PSObject.Properties) {
-            $name = $property.Name.ToUpper()
-            $value = $property.Value
-            echo "$name=$value" >> $env:GITHUB_ENV
-          }
+            # Set specific properties as environment variables
+            $openaiKey = $config.openai_key
+            $openaiEndpoint = $config.openai_endpoint
+
+            echo "OPENAI_KEY=$openaiKey" >> $env:GITHUB_ENV
+            echo "OPENAI_ENDPOINT=$openaiEndpoint" >> $env:GITHUB_ENV
         shell: pwsh
 
       - name: Provision Infrastructure
