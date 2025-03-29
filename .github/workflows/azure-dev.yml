@@ -62,14 +62,7 @@ jobs:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Provision Infrastructure
-        run: |
-          if (-not $env:OPENAI_KEY -or -not $env:OPENAI_ENDPOINT) {
-              Write-Error "Environment variables OPENAI_KEY or OPENAI_ENDPOINT are not set."
-              exit 1
-            } else {
-              Write-Host "Environment variables have been set successfully."
-            }
-              
+        run: |             
           azd provision --no-prompt
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
