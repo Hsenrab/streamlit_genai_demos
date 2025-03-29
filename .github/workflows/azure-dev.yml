@@ -63,6 +63,13 @@ jobs:
 
       - name: Provision Infrastructure
         run: |
+          if (-not $env:OPENAI_KEY -or -not $env:OPENAI_ENDPOINT) {
+              Write-Error "Environment variables OPENAI_KEY or OPENAI_ENDPOINT are not set."
+              exit 1
+            } else {
+              Write-Host "Environment variables have been set successfully."
+            }
+              
           azd provision --no-prompt
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
