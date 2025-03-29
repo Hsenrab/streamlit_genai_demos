@@ -72,8 +72,8 @@ jobs:
             # Print the openaiEndpoint
             Write-Host "OpenAI KeyEndpoint: $openaiEndpoint"
 
-            echo "OPENAI_KEY=$openaiKey" >> $env:GITHUB_ENV
-            echo "OPENAI_ENDPOINT=$openaiEndpoint" >> $env:GITHUB_ENV
+            echo "OPENAI_KEY=$openaiKey" >> $GITHUB_ENV
+            echo "OPENAI_ENDPOINT=$openaiEndpoint" >> $GITHUB_ENV
 
             if (-not $env:OPENAI_KEY -or -not $env:OPENAI_ENDPOINT) {
               Write-Error "Environment variables OPENAI_KEY or OPENAI_ENDPOINT are not set."
