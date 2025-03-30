@@ -63,7 +63,7 @@ jobs:
 
       - name: Setup azd environment
         run: |
-          azd env new --name ${{ vars.AZURE_ENV_NAME }} --no-prompt
+          azd env new ${{ vars.AZURE_ENV_NAME }} --no-prompt
           azd env set location ${{ vars.AZURE_LOCATION }}
           azd env set environmentName ${{ vars.AZURE_ENV_NAME }}
           # Add any other required parameters
