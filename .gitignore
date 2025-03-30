@@ -1,5 +1,6 @@
 # infra settings 
 infra/main.bicepparam
+config.json
 
 # generated files
 output_images/*
