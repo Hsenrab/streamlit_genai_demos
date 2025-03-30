@@ -1,4 +1,3 @@
-name: Deploy attempt 2
 # Run when commits are pushed to githubactions
 on:
   workflow_dispatch:
