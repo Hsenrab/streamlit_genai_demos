@@ -1,6 +1,5 @@
 # infra settings 
 infra/main.bicepparam
-infra/main.parameters.json
 
 # generated files
 output_images/*
