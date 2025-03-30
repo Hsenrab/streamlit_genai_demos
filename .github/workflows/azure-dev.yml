@@ -61,6 +61,21 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Setup azd environment
+        run: |
+          azd env new --name ${{ vars.AZURE_ENV_NAME }} --no-prompt
+          azd env set location ${{ vars.AZURE_LOCATION }}
+          azd env set environmentName ${{ vars.AZURE_ENV_NAME }}
+          # Add any other required parameters
+        shell: pwsh
+
+      - name: Debug Environment
+        run: |
+          echo "AZD Environment Configuration:"
+          azd env list
+          azd show
+        shell: pwsh
+
       - name: Provision Infrastructure
         run: |             
           azd provision --no-prompt
