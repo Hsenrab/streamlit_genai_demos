@@ -31,6 +31,7 @@ resource web 'Microsoft.Web/sites@2022-03-01' = {
       ENABLE_ORYX_BUILD: 'true'
       OPENAI_API_KEY: openai_key
       OPENAI_API_ENDPOINT: openai_endpoint
+      TEST_ENV: 'true'
     }
   }
 
