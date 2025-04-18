@@ -89,6 +89,24 @@ This command will prompt you for the following information:
 
 3. If you want to change things make changes to stlitapp.py and run `azd deploy` again to update your changes.
 
+### Enable CI/CD for Github Actions
+https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect
+- Create a Microsoft Entra application with a service principal
+  - Create a Microsoft Entra application with a service principal by Azure portal, Azure CLI, or Azure PowerShell.
+  - Copy the values for Client ID, Subscription ID, and Directory (tenant) ID to use later in your GitHub Actions workflow.
+  - Assign an appropriate role to your service principal by Azure portal, Azure CLI, or Azure PowerShell.
+  - Configure a federated identity credential on a Microsoft Entra application to trust tokens issued by GitHub Actions to your GitHub repository.
+- Fork the git respository
+- Create Github Action Secrets for each entry in .env file
+- Create Github Action Variable for 
+  - AZURE_CLIENT_ID
+  - AZURE_ENV_NAME
+  - AZURE_LOCATION
+  - AZURE_SUBSCRIPTION_ID
+  - AZURE_TENANT_ID
+
+
+
 ## Notes
 
 This uses the F1 (free) SKU for app service, which has limited CPU and RAM resources.
@@ -96,5 +114,3 @@ This uses the F1 (free) SKU for app service, which has limited CPU and RAM resou
 See the [pricing calculator](https://azure.microsoft.com/en-au/pricing/calculator/) for details on paid SKUs replace the SKU option with a suitable choice.
 
 Based on the this [great template:](MiguelElGallo/simple-streamlit-azd)
-
-Added support for `azd pipeline config`, enabling creation of CI/CD pipeline for GitHub Actions. Note this is still a [beta](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=GitHub) feature in AZD.
