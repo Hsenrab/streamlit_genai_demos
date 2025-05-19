@@ -11,9 +11,20 @@ As someone familar with python a way to create quick demos with a functional UI
 ## Usage
 
 ### Locally
+
 1. Create a virtual environment
 2. Install dependencies in requirements.txt
-3. Run the command below to run strealit on localhost.
+3. Create a `.env` file in the root directory to configure model access.
+
+Example `.env` file:
+
+```text
+OPENAI_API_ENDPOINT=https://<your-endpoint>.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview
+OPENAI_API_KEY=<your-api-key-here>
+```
+
+4. Run the command below to run strealit on localhost.
+
 ```bash
 python -m streamlit run src/Home.py
 ```
