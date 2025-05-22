@@ -70,5 +70,80 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 }
 
+resource search 'Microsoft.Search/searchServices@2023-11-01' = {
+  name: 'search-${resourceToken}'
+  location: location
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    partitionCount: 1
+    replicaCount: 1
+    hostingMode: 'default'
+    publicNetworkAccess: 'enabled'
+  }
+  tags: tags
+}
+
+resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: 'st${uniqueString(resourceToken, location)}'
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  properties: {
+    allowBlobPublicAccess: false
+  }
+  tags: tags
+}
+
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+  name: '${storage.name}/default/searchdocuments'
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
+resource configureSearch 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
+  name: 'configure-search-${resourceToken}'
+  location: location
+  kind: 'AzureCLI'
+  properties: {
+    azCliVersion: '2.53.0'
+    timeout: 'PT15M'
+    retentionInterval: 'P1D'
+    scriptContent: loadTextContent('scripts/configure-search.sh')
+    supportingScriptUris: []
+    environmentVariables: [
+      {
+        name: 'SEARCH_NAME'
+        value: search.name
+      }
+      {
+        name: 'STORAGE_NAME'
+        value: storage.name
+      }
+      {
+        name: 'STORAGE_KEY'
+        value: storage.listKeys().keys[0].value
+      }
+      {
+        name: 'CONTAINER_NAME'
+        value: container.name
+      }
+      {
+        name: 'LOCATION'
+        value: location
+      }
+      {
+        name: 'RESOURCE_GROUP'
+        value: resourceGroup().name
+      }
+    ]
+    forceUpdateTag: uniqueString(resourceToken)
+    cleanupPreference: 'OnSuccess'
+  }
+}
 
 output WEB_URI string = 'https://${web.properties.defaultHostName}'
