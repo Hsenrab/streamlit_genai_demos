@@ -10,4 +10,4 @@ services:
     host: appservice
 infra:
   name: main
-  parameters: ./infra/main.parameters.json
+  parameters: ./infra/main.parameters
