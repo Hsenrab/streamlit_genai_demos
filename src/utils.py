@@ -5,6 +5,17 @@ import base64
 import streamlit as st
 
 def pdftoimages(pdf_path):
+    """
+    Converts each page of a PDF file into an image and saves them locally.
+    Args:
+        pdf_path (str): The file path to the PDF document to be converted.
+    Returns:
+        list of str: A list containing the file paths of the generated image files.
+    Notes:
+        - Images are saved in the 'output_images' directory, which is created if it does not exist.
+        - Each image is named using the PDF file name and the page number (e.g., 'document_page0.jpg').
+        - Requires the 'fitz' (PyMuPDF) and 'os' modules.
+    """
     
     pdf_document = fitz.open(pdf_path)
     image_paths = []
@@ -29,6 +40,19 @@ def pdftoimages(pdf_path):
 
 
 def create_data_url(image_path):
+    """
+    Converts an image file to a data URL containing a base64-encoded representation of the image.
+    Args:
+        image_path (str): The file path to the image.
+    Returns:
+        str: A data URL string in the format 'data:image/<ext>;base64,<base64_data>' suitable for embedding in HTML.
+    Raises:
+        FileNotFoundError: If the specified image file does not exist.
+        Exception: For other issues encountered while reading or encoding the file.
+    Example:
+        data_url = create_data_url('path/to/image.png')
+    """
+    
     binary_fc       = open(image_path, 'rb').read()
     base64_utf8_str = base64.b64encode(binary_fc).decode('utf-8')
 
@@ -39,6 +63,22 @@ def create_data_url(image_path):
 
 
 def prompt_management(prompt_type, default_prompt):
+    """
+    Manages prompt selection, editing, and saving for a given prompt type in a Streamlit app.
+    This function provides a UI for users to:
+    - Select a prompt file from a folder specific to the prompt type.
+    - Edit the contents of the selected prompt.
+    - Save changes to the existing prompt file.
+    - Save the edited prompt as a new file.
+    If the prompt folder or default prompt file does not exist, they are created with the provided default prompt.
+    Args:
+        prompt_type (str): The type/category of the prompt (used to determine the folder and session state key).
+        default_prompt (str): The default prompt text to use if no prompt file exists.
+    Side Effects:
+        - Modifies Streamlit session state to track the current prompt and selected file.
+        - Creates directories and files on disk as needed.
+        - Updates the UI with Streamlit widgets for prompt management.
+    """
     
     prompt_folder = f"prompt/{prompt_type}"
     prompt_state = f"{prompt_type}_prompt"

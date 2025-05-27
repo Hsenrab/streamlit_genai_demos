@@ -1,8 +1,18 @@
+"""
+This Streamlit page provides a user interface for comparing two markdown documents.
+Features:
+- Displays a title and prompt management section for configuring the AI assistant's behavior.
+- Lists available markdown files from the 'markdown_output' directory and allows the user to select two files for comparison.
+- Shows the content of the selected documents side by side in text areas.
+- On clicking the "Compare" button, sends both documents to an AI-powered comparison function and displays the result.
+Purpose:
+The purpose of this page is to assist users in analyzing and comparing the content of two markdown documents using AI, highlighting similarities, differences, or other relevant insights.
+"""
+
 import streamlit as st
 import openai_connection
 import os
 import utils
-
 
 st.title("Document Comparison")
 

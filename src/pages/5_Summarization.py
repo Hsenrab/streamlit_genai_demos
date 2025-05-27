@@ -1,3 +1,15 @@
+"""
+5_Summarization.py
+This Streamlit page provides a user interface for summarizing markdown documents using an AI assistant.
+Users can select a markdown file from the 'markdown_output' directory, view its content, and generate a summary
+using an AI model via the `openai_connection` module. The page also includes a prompt management section for
+customizing the summarization prompt.
+Purpose:
+- Allow users to easily select and summarize markdown documents.
+- Display the original document content for reference.
+- Integrate prompt management for flexible summarization instructions.
+"""
+
 import streamlit as st
 import openai_connection
 import os
