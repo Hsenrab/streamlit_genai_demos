@@ -1,3 +1,13 @@
+"""
+This Streamlit page implements a simple echo chat interface.
+Features:
+- Displays a title and a brief description.
+- Maintains a chat history using Streamlit's session state.
+- Renders all previous chat messages (both user and assistant) on each rerun.
+- Accepts user input via a chat input box.
+- When the user submits a message, it is displayed and added to the chat history.
+- The assistant responds by echoing the user's message prefixed with "Echo:", displays it, and adds it to the chat history.
+"""
 import streamlit as st
 
 st.title("Echo")

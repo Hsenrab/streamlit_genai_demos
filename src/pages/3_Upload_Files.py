@@ -1,3 +1,12 @@
+"""
+3_Upload_Files.py
+This Streamlit page provides an interface for uploading and processing files in three formats: PDF, Image, and Text.
+- For PDF uploads, users can select the extraction method (GPT 4o or Doc Intelligence), upload a PDF, and extract text from its images using AI models.
+- For Image uploads, users can upload an image file and extract text using AI models.
+- For Text uploads, users can input text directly and save it as a markdown file.
+The extracted or input text is saved as a markdown file in the 'markdown_output' directory. Uploaded files are stored in the 'uploads' directory. The page uses utility functions for file handling and AI-based text extraction.
+"""
+
 import streamlit as st
 import os
 import utils

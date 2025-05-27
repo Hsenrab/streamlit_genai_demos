@@ -1,3 +1,22 @@
+"""
+Streamlit Chat Page
+This Streamlit page implements a simple chat interface using OpenAI's API.
+Features:
+- Initializes and maintains a chat history in the Streamlit session state.
+- Displays all previous chat messages (system, user, assistant) on each rerun.
+- Accepts user input via a chat input box.
+- Sends user input and chat history to the OpenAI API via the `openai_connection.chat` function.
+- Displays both user and assistant messages in the chat interface.
+- Updates the chat history after each interaction.
+Dependencies:
+- streamlit
+- openai_connection (custom module for OpenAI API interaction)
+Session State Keys:
+- "chat_messages": List of message dictionaries with "role" and "content" keys.
+Usage:
+- Place this file in the Streamlit app's pages directory.
+- Ensure `openai_connection` is implemented and available in the import path.
+"""
 import streamlit as st
 import openai_connection
 
