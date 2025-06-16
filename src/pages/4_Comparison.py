@@ -15,9 +15,11 @@ import os
 import utils
 
 st.title("Document Comparison")
+st.write("Use this page to compare two documents that were previously uploaded and processed through the Upload Files page. The AI will analyze and highlight key similarities and differences between the documents.")
 
     
 with st.expander("Prompt Management", expanded=True):
+    st.info("You can customize and save the prompt used for document comparison. The changes are saved locally and won't persist in the cloud between redeployments.")
     utils.prompt_management("comparison", "You are an AI assistant that compares two markdown documents")
 
 

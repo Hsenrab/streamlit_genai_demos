@@ -16,8 +16,10 @@ import os
 import utils
 
 st.title("Document Summarization")
+st.write("Use this page to generate AI-powered summaries of documents that were previously uploaded and processed through the Upload Files page. The AI will identify and condense the key information from your document.")
 
 with st.expander("Prompt Management", expanded=True):
+    st.info("You can customize and save the prompt used for document summarization. The changes are saved locally and won't persist in the cloud between redeployments.")
     utils.prompt_management("summarize", "You are an AI assistant that summarizes markdown documents")
 
 output_folder = "markdown_output"
