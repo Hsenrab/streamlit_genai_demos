@@ -4,3 +4,6 @@ streamlit==1.45.1
 python-dotenv==1.1.0
 openai==1.82.0
 pymupdf==1.26.0
+requests==2.31.0
+azure-ai-projects==1.0.0b11
+azure-identity==1.15.0

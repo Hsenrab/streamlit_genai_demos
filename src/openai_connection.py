@@ -2,6 +2,9 @@ import openai
 import os
 import streamlit as st
 import urllib.request
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import ListSortOrder
+from azure.identity import DefaultAzureCredential
 
 from dotenv import load_dotenv
 
@@ -164,5 +167,88 @@ def compare(markdown1, markdown2):
     prompt = f"Input:\n\n--- Start of Document 1 ---\n{markdown1}\n--- End of Document 1 ---\n\n--- Start of Document 2 ---\n{markdown2}\n--- End of Document 2 ---"
 
     return question(prompt, system_prompt)
+
+def ai_foundry_web_search(prompt, history):
+    """
+    Sends a chat prompt along with conversation history to the AI Foundry agent for web search
+    and returns the assistant's response.
+    
+    Uses the Azure AI Projects API to communicate with AI Foundry agents.
+    
+    Args:
+        prompt (str): The latest user input to be sent to the agent.
+        history (list): A list of previous message dictionaries, each containing 'role' and 'content' keys,
+                       representing the conversation history.
+    
+    Returns:
+        str: The content of the agent's response as a string, or an error message if the request fails.
+    """    # Get configuration from environment variables
+    ai_foundry_endpoint = os.getenv("AI_FOUNDRY_ENDPOINT")
+    ai_foundry_agent_id = os.getenv("AI_FOUNDRY_AGENT_ID")
+    
+    # Check for required environment variables
+    missing_vars = []
+    if not ai_foundry_endpoint:
+        missing_vars.append("AI_FOUNDRY_ENDPOINT")
+    if not ai_foundry_agent_id:
+        missing_vars.append("AI_FOUNDRY_AGENT_ID")
+    
+    if missing_vars:
+        return f"Error: AI Foundry configuration is missing. Please check environment variables: {', '.join(missing_vars)}"
+    
+    with st.spinner("Searching the web for an answer..."):
+        try:
+            # Initialize the AI Project client
+            project = AIProjectClient(
+                credential=DefaultAzureCredential(),
+                endpoint=ai_foundry_endpoint
+            )
+            
+            # Get the agent
+            agent = project.agents.get_agent(ai_foundry_agent_id)
+            
+            # Create a new thread if needed or use existing thread_id from session state
+            if "ai_foundry_thread_id" not in st.session_state:
+                thread = project.agents.threads.create()
+                st.session_state.ai_foundry_thread_id = thread.id
+            
+            thread_id = st.session_state.ai_foundry_thread_id
+            
+            # Create a new message with the current prompt
+            message = project.agents.messages.create(
+                thread_id=thread_id,
+                role="user",
+                content=prompt
+            )
+            
+            # Run the agent with the message
+            run = project.agents.runs.create_and_process(
+                thread_id=thread_id,
+                agent_id=agent.id
+            )
+            
+            # Check run status
+            if run.status == "failed":
+                return f"Run failed: {run.last_error}"
+            
+            # Get messages from the thread
+            messages = project.agents.messages.list(
+                thread_id=thread_id, 
+                order=ListSortOrder.ASCENDING
+            )
+            
+            # Format and display the messages
+            response = ""
+            for message in messages:
+                if message.role == "assistant" and hasattr(message, 'text_messages') and message.text_messages:
+                    response = message.text_messages[-1].text.value
+            
+            if not response:
+                return "No response received from the AI Foundry agent."
+                
+            return response
+                
+        except Exception as e:
+            return f"Error occurred while communicating with AI Foundry agent: {str(e)}"
 
 # TODO create button to delete all uploaded pdfs and images.
