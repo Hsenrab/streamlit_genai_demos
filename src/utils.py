@@ -1,4 +1,3 @@
-
 import fitz
 import os
 import base64
@@ -122,13 +121,11 @@ def prompt_management(prompt_type, default_prompt):
                         f.write(new_prompt)
                     st.success(f"Prompt saved to {selected_file}")
                 else:
-                    st.warning("No file selected to save the prompt.")
-
-        # Button to save as a new prompt
+                    st.warning("No file selected to save the prompt.")        # Button to save as a new prompt
         with col2:
             display_text = "Save As - Enter New Name (e.g., new_prompt.txt) (no validation for now)"
             new_prompt_name = st.text_input(display_text)
-            if new_prompt_name is not "":
+            if new_prompt_name != "":
                 new_prompt_path = os.path.join(prompt_folder, new_prompt_name)
                 if os.path.exists(new_prompt_path):
                     st.error(f"A file with the name {new_prompt_name} already exists. Please choose a different name.")
@@ -138,4 +135,62 @@ def prompt_management(prompt_type, default_prompt):
                     st.success(f"New prompt saved as {new_prompt_name}")
                     st.session_state.prompt_file = new_prompt_name
                     st.rerun()
-                
+    
+def render_json_section(data, level=3):
+    """
+    Recursively renders a JSON structure in a user-friendly way in Streamlit.
+    
+    Args:
+        data (dict, list): The JSON data to render
+        level (int): The heading level for sections (default=3)
+    
+    Returns:
+        None: The function directly renders to the Streamlit UI
+        
+    Features:
+        - Converts keys from snake_case to Title Case
+        - Handles nested dictionaries and lists in a compact way
+        - Skips empty values
+    """
+    if isinstance(data, dict):
+        # Group simple values and nested structures
+        simple_values = {}
+        nested_structures = {}
+        
+        for key, value in data.items():
+            if isinstance(value, (dict, list)) and value:  # Skip empty dicts/lists
+                nested_structures[key] = value
+            elif value not in (None, "", [], {}):  # Only include non-empty simple values
+                simple_values[key] = value
+        
+        # First, display the section name and any simple values in a compact format
+        if simple_values:
+            values_html = "<div style='margin-bottom:10px;'>"
+            for key, value in simple_values.items():
+                display_key = key.replace('_', ' ').title()
+                values_html += f"<div><strong>{display_key}:</strong> {value}</div>"
+            values_html += "</div>"
+            st.markdown(values_html, unsafe_allow_html=True)
+            
+        # Then handle any nested structures with their own sections
+        for key, value in nested_structures.items():
+            display_key = key.replace('_', ' ').title()
+            st.markdown(f"<div style='font-size: 18px; font-weight: bold; margin-top: 10px; margin-bottom: 5px; border-bottom: 1px solid #666;'>{display_key}</div>", unsafe_allow_html=True)
+            render_json_section(value, level + 1)
+    
+    # Handle list values
+    elif isinstance(data, list) and data:
+        # For simple lists, display items as bullet points
+        if all(not isinstance(item, (dict, list)) for item in data):
+            items_html = "<ul style='margin-top:0; margin-bottom:10px;'>"
+            for item in data:
+                items_html += f"<li>{item}</li>"
+            items_html += "</ul>"
+            st.markdown(items_html, unsafe_allow_html=True)
+        # For complex lists with nested structures, process each item recursively
+        else:
+            for item in data:
+                if isinstance(item, (dict, list)):
+                    render_json_section(item, level + 1)
+                else:
+                    st.markdown(f"- {item}")

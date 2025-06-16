@@ -34,40 +34,43 @@ def question(prompt, system_prompt="You are a helpful assistant."):
     return response.choices[0].message.content
     
     
-def chat(prompt, history):
+def chat(prompt, history, response_format=None):
     """
     Sends a chat prompt along with conversation history to the OpenAI GPT-4o model and returns the assistant's response.
     Args:
         prompt (str): The latest user input to be sent to the model.
         history (list): A list of previous message dictionaries, each containing 'role' and 'content' keys, representing the conversation history.
+        response_format (str, optional): The format for the response. If set to 'json', the API will be instructed
+                                         to return a JSON object but the function will still return a string. 
+                                         Defaults to None (plain text).
     Returns:
-        str: The content of the model's response, or an error message if the request fails.
+        str: The content of the model's response as a string, or an error message if the request fails.
     Raises:
         None: All exceptions are handled within the function.
     """
     
     messages=history + [{"role": "user", "content": prompt}]
-
+    
+    # Set up the API parameters
+    params = {
+        "model": "gpt-4o",
+        "messages": messages
+    }
+    
+    # Add response format if specified
+    if response_format == 'json':
+        params["response_format"] = {"type": "json_object"}
     
     with st.spinner("Waiting for response..."):
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages
-            )
-
-            result = response.choices[0].message.content
+            response = client.chat.completions.create(**params)
+            return response.choices[0].message.content
             
         except urllib.error.HTTPError as error:
             print("The request failed with status code: " + str(error.code))
-
-            # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
             print(error.info())
             print(error.read().decode("utf8", 'ignore'))
-
-            result = "Sorry, I am unable to process your request at the moment. The request failed with status code: " + str(error.code)
-
-    return result
+            return "Sorry, I am unable to process your request at the moment. The request failed with status code: " + str(error.code)
 
 
 def generate_markdown(image_url):
