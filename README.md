@@ -8,6 +8,7 @@ As someone familar with python a way to create quick demos with a functional UI
 
 - Azure subscription with contributor rights
 - Previously deployed OpenAI / Foundry resource with gpt4o deployed.
+- OPTIONAL for Websearch feature - and AI Foundry Agent deployed with Custom Webskill knowledge.
 
 ## Usage
 
@@ -29,7 +30,7 @@ As someone familar with python a way to create quick demos with a functional UI
     OPENAI_API_ENDPOINT=https://<your-endpoint>.openai.azure.com
     OPENAI_API_KEY=<your-api-key>
     
-    # AI Foundry Configuration (for WebSearch feature)
+    # AI Foundry Configuration (OPTIONAL - for WebSearch feature)
     AI_FOUNDRY_ENDPOINT=https://<your-foundry-project>.services.ai.azure.com/api/projects/<your-project-name>
     AI_FOUNDRY_AGENT_ID=asst_<your-agent-id>
     ```
