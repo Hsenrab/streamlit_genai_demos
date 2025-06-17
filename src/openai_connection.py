@@ -2,6 +2,9 @@ import openai
 import os
 import streamlit as st
 import urllib.request
+import platform
+import ssl
+import certifi
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
 from azure.identity import DefaultAzureCredential
@@ -9,6 +12,15 @@ from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Fix for SSL certificate verification issues on macOS
+if platform.system() == 'Darwin':  # Check if running on macOS
+    # Set default SSL context to use certifi's certificates
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+    # Apply this context to urllib's default HTTPS handler
+    urllib.request.install_opener(urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ssl_context)
+    ))
 
 client = openai.AzureOpenAI(
   azure_endpoint = os.getenv("OPENAI_API_ENDPOINT"), 
