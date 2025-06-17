@@ -20,13 +20,18 @@ As someone familar with python a way to create quick demos with a functional UI
     pip install -r src\requirements.txt
     ```
 
-3. Create a `.env` file in the root directory to configure model access.
+3. Create a `.env` file in the root directory to configure model access. A `sample.env` file is provided as a template.
 
     Example `.env` file:
 
     ```text
-    OPENAI_API_ENDPOINT=https://<your-endpoint>.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview
-    OPENAI_API_KEY=<your-api-key-here>
+    # OpenAI Configuration
+    OPENAI_API_ENDPOINT=https://<your-endpoint>.openai.azure.com
+    OPENAI_API_KEY=<your-api-key>
+    
+    # AI Foundry Configuration (for WebSearch feature)
+    AI_FOUNDRY_ENDPOINT=https://<your-foundry-project>.services.ai.azure.com/api/projects/<your-project-name>
+    AI_FOUNDRY_AGENT_ID=asst_<your-agent-id>
     ```
 
 4. Run the command below to run strealit on localhost.

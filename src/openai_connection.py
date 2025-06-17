@@ -2,6 +2,9 @@ import openai
 import os
 import streamlit as st
 import urllib.request
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import ListSortOrder
+from azure.identity import DefaultAzureCredential
 
 from dotenv import load_dotenv
 
@@ -34,40 +37,43 @@ def question(prompt, system_prompt="You are a helpful assistant."):
     return response.choices[0].message.content
     
     
-def chat(prompt, history):
+def chat(prompt, history, response_format=None):
     """
     Sends a chat prompt along with conversation history to the OpenAI GPT-4o model and returns the assistant's response.
     Args:
         prompt (str): The latest user input to be sent to the model.
         history (list): A list of previous message dictionaries, each containing 'role' and 'content' keys, representing the conversation history.
+        response_format (str, optional): The format for the response. If set to 'json', the API will be instructed
+                                         to return a JSON object but the function will still return a string. 
+                                         Defaults to None (plain text).
     Returns:
-        str: The content of the model's response, or an error message if the request fails.
+        str: The content of the model's response as a string, or an error message if the request fails.
     Raises:
         None: All exceptions are handled within the function.
     """
     
     messages=history + [{"role": "user", "content": prompt}]
-
+    
+    # Set up the API parameters
+    params = {
+        "model": "gpt-4o",
+        "messages": messages
+    }
+    
+    # Add response format if specified
+    if response_format == 'json':
+        params["response_format"] = {"type": "json_object"}
     
     with st.spinner("Waiting for response..."):
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages
-            )
-
-            result = response.choices[0].message.content
+            response = client.chat.completions.create(**params)
+            return response.choices[0].message.content
             
         except urllib.error.HTTPError as error:
             print("The request failed with status code: " + str(error.code))
-
-            # Print the headers - they include the requert ID and the timestamp, which are useful for debugging the failure
             print(error.info())
             print(error.read().decode("utf8", 'ignore'))
-
-            result = "Sorry, I am unable to process your request at the moment. The request failed with status code: " + str(error.code)
-
-    return result
+            return "Sorry, I am unable to process your request at the moment. The request failed with status code: " + str(error.code)
 
 
 def generate_markdown(image_url):
@@ -161,5 +167,120 @@ def compare(markdown1, markdown2):
     prompt = f"Input:\n\n--- Start of Document 1 ---\n{markdown1}\n--- End of Document 1 ---\n\n--- Start of Document 2 ---\n{markdown2}\n--- End of Document 2 ---"
 
     return question(prompt, system_prompt)
+
+def ai_foundry_get_messages(thread_id):
+    """
+    Retrieves and formats messages from an AI Foundry thread.
+    
+    Args:
+        thread_id (str): The ID of the AI Foundry thread.
+    
+    Returns:
+        list: A list of message dictionaries, each containing 'role' and 'content' keys.
+    """
+    # Get configuration from environment variables
+    ai_foundry_endpoint = os.getenv("AI_FOUNDRY_ENDPOINT")
+    ai_foundry_agent_id = os.getenv("AI_FOUNDRY_AGENT_ID")
+    
+    # Check for required environment variables
+    missing_vars = []
+    if not ai_foundry_endpoint:
+        missing_vars.append("AI_FOUNDRY_ENDPOINT")
+    if not ai_foundry_agent_id:
+        missing_vars.append("AI_FOUNDRY_AGENT_ID")
+    
+    if missing_vars:
+        return [{"role": "assistant", "content": f"Error: AI Foundry configuration is missing. Please check environment variables: {', '.join(missing_vars)}"}]
+    
+    try:
+        # Initialize the AI Project client
+        project = AIProjectClient(
+            credential=DefaultAzureCredential(),
+            endpoint=ai_foundry_endpoint
+        )
+        
+        # Get messages from the thread
+        messages = project.agents.messages.list(
+            thread_id=thread_id, 
+            order=ListSortOrder.ASCENDING
+        )
+        
+        # Format the messages for display
+        formatted_messages = []
+        for message in messages:
+            if message.text_messages:
+                formatted_messages.append({
+                    "role": message.role,
+                    "content": message.text_messages[-1].text.value
+                })
+        
+        return formatted_messages
+        
+    except Exception as e:
+        return [{"role": "assistant", "content": f"Error: {str(e)}"}]
+
+def ai_foundry_process_message(prompt):
+    """
+    Sends a user message to the AI Foundry agent, creates or uses an existing thread,
+    and processes the message with the agent.
+    
+    Args:
+        prompt (str): The user message to process.
+    
+    Returns:
+        str: Status message indicating success or an error message.
+    """
+    # Get configuration from environment variables
+    ai_foundry_endpoint = os.getenv("AI_FOUNDRY_ENDPOINT")
+    ai_foundry_agent_id = os.getenv("AI_FOUNDRY_AGENT_ID")
+    
+    # Check for required environment variables
+    missing_vars = []
+    if not ai_foundry_endpoint:
+        missing_vars.append("AI_FOUNDRY_ENDPOINT")
+    if not ai_foundry_agent_id:
+        missing_vars.append("AI_FOUNDRY_AGENT_ID")
+    
+    if missing_vars:
+        return f"Error: AI Foundry configuration is missing. Please check environment variables: {', '.join(missing_vars)}"
+    
+    try:
+        # Initialize the AI Project client
+        project = AIProjectClient(
+            credential=DefaultAzureCredential(),
+            endpoint=ai_foundry_endpoint
+        )
+        
+        # Get the agent
+        agent = project.agents.get_agent(ai_foundry_agent_id)
+        
+        # Create a new thread if needed or use existing thread
+        if "ai_foundry_thread_id" not in st.session_state:
+            thread = project.agents.threads.create()
+            st.session_state.ai_foundry_thread_id = thread.id
+        
+        thread_id = st.session_state.ai_foundry_thread_id
+        
+        # Create a new message with the current prompt
+        project.agents.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=prompt
+        )
+        
+        # Run the agent with the message
+        run = project.agents.runs.create_and_process(
+            thread_id=thread_id,
+            agent_id=agent.id
+        )
+        
+        # Check run status
+        if run.status == "failed":
+            return f"Error: Run failed: {run.last_error}"
+        
+        return "Success"
+            
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # TODO create button to delete all uploaded pdfs and images.

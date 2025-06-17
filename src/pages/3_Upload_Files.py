@@ -13,7 +13,8 @@ import utils
 import openai_connection
 
 
-st.title("Upload FIles")
+st.title("Upload Files")
+st.write("Use this page to upload PDF documents, images, or text content that you want to convert to markdown format and analyze with AI. The files uploaded here can be used in the Comparison and Summarization pages.")
 
 # Add a toggle to select the type of flow
 upload_type = st.radio(
